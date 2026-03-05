@@ -10,7 +10,7 @@ body {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 2rem auto;
   padding: 1.5rem;
   background: #fff;
@@ -18,7 +18,8 @@ body {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
-h1 {
+h1,
+h2 {
   margin: 0;
 }
 
@@ -36,9 +37,15 @@ h1 {
 }
 
 .file-label,
+button,
+select,
+input {
+  border-radius: 8px;
+}
+
+.file-label,
 button {
   border: none;
-  border-radius: 8px;
   padding: 0.6rem 1rem;
   font-weight: 600;
 }
@@ -69,6 +76,78 @@ button:disabled {
   color: #4b5563;
 }
 
+.panel {
+  border: 1px solid #d5dbe5;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #fbfcff;
+}
+
+.help {
+  margin: 0.5rem 0 0.8rem;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.editor-top,
+.manual-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.break-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#breakPositionsInput,
+#splitMode {
+  border: 1px solid #bcc7da;
+  padding: 0.45rem 0.6rem;
+}
+
+#breakReadout {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  margin: 0.8rem 0;
+}
+
+.line-preview {
+  position: relative;
+  border: 1px solid #d5dbe5;
+  border-radius: 8px;
+  background: #fff;
+  overflow: auto;
+}
+
+#previewText {
+  margin: 0;
+  padding: 0.75rem;
+  white-space: pre;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  line-height: 1.4;
+  min-height: 8.5rem;
+}
+
+.divider-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: #db2777;
+  pointer-events: auto;
+  cursor: col-resize;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -88,4 +167,13 @@ td {
 
 th {
   background: #eef3fd;
+}
+
+.header-input {
+  width: 100%;
+  border: 1px solid #9fb0cf;
+  padding: 0.35rem 0.45rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: #fff;
 }
