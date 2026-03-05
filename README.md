@@ -1,8 +1,8 @@
 diff --git a/README.md b/README.md
-index 7f8d9223210ffe4feea5b41ff153f7346301534d..b6b1d4630de610dbfe3213333ae0c993e34ce591 100644
+index 7f8d9223210ffe4feea5b41ff153f7346301534d..7956ea7ca3f8e4c38ea906ae9c408f9e2d8bbcaa 100644
 --- a/README.md
 +++ b/README.md
-@@ -1 +1,20 @@
+@@ -1 +1,17 @@
 -# Test1-PDF-TO-CSV
 \ No newline at end of file
 +# Test1-PDF-TO-CSV
@@ -11,14 +11,11 @@ index 7f8d9223210ffe4feea5b41ff153f7346301534d..b6b1d4630de610dbfe3213333ae0c993
 +
 +## How to use
 +
-+1. Open `index.html` from a static host (or GitHub Pages deployment).
-+2. Upload a PDF file.
-+3. In **Preview & Column Editor**:
-+   - Use **Split mode: Auto** for automatic breaks, or switch to **Manual**.
-+   - In manual mode, drag vertical dividers or edit numeric break positions.
-+   - Add/remove dividers to change column count.
-+   - Rename headers inline in the preview table.
-+4. Click **Download CSV**.
++1. Upload a PDF.
++2. Click **Preview**.
++3. In **Preview & Column Editor**, adjust column breaks (Auto/Manual, drag dividers, or edit numeric positions).
++4. Rename headers inline if needed.
++5. Click **Process** (top-right of preview panel) to generate/download CSV from your current preview.
 +
 +CSV export includes headers and rows exactly as shown in the preview table.
 +
