@@ -8,7 +8,8 @@ const MAX_PREVIEW_ROWS = 200;
 const DEFAULT_CHAR_WIDTH = 90;
 
 const pdfInput = document.getElementById("pdfInput");
-const downloadBtn = document.getElementById("downloadBtn");
+const previewBtn = document.getElementById("previewBtn");
+const processBtn = document.getElementById("processBtn");
 const statusEl = document.getElementById("status");
 const resultTable = document.getElementById("resultTable");
 const tableHead = document.getElementById("tableHead");
@@ -31,17 +32,37 @@ let headers = [];
 let draggingDividerIndex = null;
 
 const persisted = loadState();
-if (persisted.mode) {
-  splitMode.value = persisted.mode;
-}
-if (persisted.breaks) {
-  manualBreaks = sanitizeBreaks(persisted.breaks);
-}
-if (persisted.headers) {
-  headers = [...persisted.headers];
-}
+if (persisted.mode) splitMode.value = persisted.mode;
+if (persisted.breaks) manualBreaks = sanitizeBreaks(persisted.breaks);
+if (persisted.headers) headers = [...persisted.headers];
 
 pdfInput.addEventListener("change", onFileSelected);
+previewBtn.addEventListener("click", () => {
+  if (!rawLines.length) return;
+  editorPanel.hidden = false;
+  rerender();
+  processBtn.disabled = false;
+  statusEl.textContent = `Preview ready. Showing first ${Math.min(rawLines.length, MAX_PREVIEW_ROWS)} row(s).`;
+});
+
+processBtn.addEventListener("click", () => {
+  const previewRows = getPreviewRows();
+  if (!previewRows.length) return;
+
+  const tableData = [getHeaders(previewRows[0].length), ...previewRows];
+  const csv = tableToCsv(tableData);
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "extracted-table.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+
+  statusEl.textContent = "CSV generated from the current preview.";
+});
+
 splitMode.addEventListener("change", () => {
   updateEditorVisibility();
   rerender();
@@ -80,22 +101,6 @@ resetBreaksBtn.addEventListener("click", () => {
   saveState();
 });
 
-downloadBtn.addEventListener("click", () => {
-  const previewRows = getPreviewRows();
-  if (!previewRows.length) return;
-
-  const tableData = [getHeaders(previewRows[0].length), ...previewRows];
-  const csv = tableToCsv(tableData);
-
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "extracted-table.csv";
-  link.click();
-  URL.revokeObjectURL(url);
-});
-
 window.addEventListener("resize", () => {
   if (!rawLines.length || splitMode.value !== "manual") return;
   drawDividers(getActiveBreaks());
@@ -108,8 +113,10 @@ async function onFileSelected(event) {
   if (!file) return;
 
   statusEl.textContent = "Reading PDF...";
-  downloadBtn.disabled = true;
+  previewBtn.disabled = true;
+  processBtn.disabled = true;
   resultTable.hidden = true;
+  editorPanel.hidden = true;
 
   try {
     const arrayBuffer = await file.arrayBuffer();
@@ -134,11 +141,8 @@ async function onFileSelected(event) {
       manualBreaks = [...autoBreaks];
     }
 
-    editorPanel.hidden = false;
-    statusEl.textContent = `Extracted ${rawLines.length} line(s). Showing first ${Math.min(rawLines.length, MAX_PREVIEW_ROWS)}.`;
-
-    rerender();
-    downloadBtn.disabled = false;
+    previewBtn.disabled = false;
+    statusEl.textContent = `Loaded ${rawLines.length} line(s). Click Preview to edit column breaks.`;
     saveState();
   } catch (error) {
     console.error(error);
@@ -168,7 +172,7 @@ function extractPageLines(items) {
       lineMap.set(yBucket, []);
     }
 
-    lineMap.get(yBucket).push({ x, text, width });
+    lineMap.get(yBucket).push({ x, text });
   }
 
   const yKeys = [...lineMap.keys()].sort((a, b) => b - a);
