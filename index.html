@@ -9,18 +9,21 @@
   <body>
     <main class="container">
       <h1>PDF to CSV</h1>
-      <p class="subtitle">Upload a PDF, tune column breaks in preview, and download a CSV that matches preview exactly.</p>
+      <p class="subtitle">Upload a PDF, open Preview, adjust column breaks, then Process to create CSV.</p>
 
       <section class="controls">
         <label class="file-label" for="pdfInput">Choose PDF</label>
         <input id="pdfInput" type="file" accept="application/pdf" />
-        <button id="downloadBtn" disabled>Download CSV</button>
+        <button id="previewBtn" type="button" disabled>Preview</button>
       </section>
 
       <p id="status" aria-live="polite">No file selected.</p>
 
       <section id="editorPanel" class="panel" hidden>
-        <h2>Preview &amp; Column Editor</h2>
+        <div class="panel-header">
+          <h2>Preview &amp; Column Editor</h2>
+          <button id="processBtn" type="button" disabled>Process</button>
+        </div>
         <p class="help">Drag dividers to adjust columns. Export uses the preview.</p>
 
         <div class="editor-top">
