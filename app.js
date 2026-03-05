@@ -148,6 +148,7 @@ async function onFileSelected(event) {
 
 function extractPageLines(items) {
   const lineMap = new Map();
+  const estimatedCharWidths = [];
 
   for (const item of items) {
     const text = (item.str || "").replace(/\s+/g, " ").trim();
@@ -156,20 +157,53 @@ function extractPageLines(items) {
     const x = item.transform?.[4] ?? 0;
     const y = item.transform?.[5] ?? 0;
     const yBucket = Math.round(y / 3) * 3;
+    const width = Number.isFinite(item.width) ? item.width : text.length * 6;
+    const charWidth = width / Math.max(1, text.length);
+
+    if (Number.isFinite(charWidth) && charWidth > 0) {
+      estimatedCharWidths.push(charWidth);
+    }
 
     if (!lineMap.has(yBucket)) {
       lineMap.set(yBucket, []);
     }
 
-    lineMap.get(yBucket).push({ x, text });
+    lineMap.get(yBucket).push({ x, text, width });
   }
 
   const yKeys = [...lineMap.keys()].sort((a, b) => b - a);
+  const avgCharWidth =
+    estimatedCharWidths.length > 0
+      ? estimatedCharWidths.reduce((sum, value) => sum + value, 0) / estimatedCharWidths.length
+      : 6;
 
   return yKeys.map((y) => {
     const tokens = lineMap.get(y).sort((a, b) => a.x - b.x);
-    return tokens.map((t) => t.text).join(" ").trim();
+    return stitchTokensWithSpacing(tokens, avgCharWidth);
   });
+}
+
+function stitchTokensWithSpacing(tokens, avgCharWidth) {
+  if (!tokens.length) return "";
+
+  let line = "";
+  const baseX = tokens[0].x;
+  let currentCharIndex = 0;
+
+  for (const token of tokens) {
+    const tokenStart = Math.max(0, Math.round((token.x - baseX) / Math.max(avgCharWidth, 1)));
+    const spacesNeeded = Math.max(1, tokenStart - currentCharIndex);
+
+    if (line.length === 0) {
+      line += token.text;
+    } else {
+      line += " ".repeat(spacesNeeded) + token.text;
+    }
+
+    currentCharIndex = line.length;
+  }
+
+  return line.replace(/\s+$/g, "");
 }
 
 function inferAutoBreaks(lines) {
