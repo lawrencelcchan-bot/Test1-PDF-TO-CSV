@@ -9,7 +9,7 @@
   <body>
     <main class="container">
       <h1>PDF to CSV</h1>
-      <p class="subtitle">Upload a PDF, extract table-like rows, preview them, and download a CSV file.</p>
+      <p class="subtitle">Upload a PDF, tune column breaks in preview, and download a CSV that matches preview exactly.</p>
 
       <section class="controls">
         <label class="file-label" for="pdfInput">Choose PDF</label>
@@ -18,6 +18,36 @@
       </section>
 
       <p id="status" aria-live="polite">No file selected.</p>
+
+      <section id="editorPanel" class="panel" hidden>
+        <h2>Preview &amp; Column Editor</h2>
+        <p class="help">Drag dividers to adjust columns. Export uses the preview.</p>
+
+        <div class="editor-top">
+          <label for="splitMode">Split mode:</label>
+          <select id="splitMode">
+            <option value="auto">Auto</option>
+            <option value="manual">Manual</option>
+          </select>
+        </div>
+
+        <div id="manualControls" class="manual-controls" hidden>
+          <div class="break-actions">
+            <button id="addDividerBtn" type="button">Add divider</button>
+            <button id="removeDividerBtn" type="button">Remove divider</button>
+            <button id="resetBreaksBtn" type="button">Reset breaks</button>
+          </div>
+          <label for="breakPositionsInput">Break positions (comma-separated)</label>
+          <input id="breakPositionsInput" type="text" placeholder="e.g. 12, 28, 54" />
+        </div>
+
+        <p id="breakReadout">Breaks: []</p>
+
+        <div id="linePreview" class="line-preview" aria-label="Line preview with draggable break dividers">
+          <pre id="previewText"></pre>
+          <div id="dividerLayer" class="divider-layer"></div>
+        </div>
+      </section>
 
       <section class="table-wrap">
         <table id="resultTable" hidden>
